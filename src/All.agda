@@ -22,8 +22,7 @@ open import Hefty.Nil
 open import Hefty.Lift
 open import Hefty.Catch
 
-{- Both S3 and S5.2 -}
-open import Example.Hefty.Catch+Throw+State
+open import Example.Hefty.Catch+Throw+State -- also contains material for 5.2
 
 
 {- Code corresponding to Section 4 of the paper -}
@@ -54,7 +53,12 @@ open import Example.Hefty.Disj+Once
 
 {- 5.4: Concurrency -}
 
+open import Free.Interleave
+open import Free.Out
 
+open import Hefty.Concur
+
+open import Example.Hefty.Out+Concur
 
 
 

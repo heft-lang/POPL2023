@@ -32,3 +32,4 @@ open import Law.Hefty.Catch
 
 {- Code corresponding to Section 5 of the paper -}
 
+open import Hefty.Lambda

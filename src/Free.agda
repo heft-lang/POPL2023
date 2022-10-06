@@ -18,7 +18,7 @@ The `variable` keyword tells Agda to implicitly add quantifiers over the
 following names when they occur free in type signatures:
 -}
 
-variable a b c : Level
+variable a b : Level
          A B C D X Y Z : Set a
          G : Set → Set
 
@@ -257,10 +257,11 @@ handle h  =  fold (λ p → pure ∘ ret h p) [ hdl h , (λ op′ k′ → impur
              ∘ to-front
 
 record SimpleHandler (ε : Effect) (G : Set → Set) : Set₁ where
-  field  ret : ∀ {A} → A → G A
-         hdl : ∀ {A} → (op : Op ε) (k : Ret ε op → Free ε′ (G A)) → Free ε′ (G A)
+  field ret : ∀ {A} → A → G A
+        hdl : ∀ {A} → (op : Op ε) (k : Ret ε op → Free ε′ (G A)) → Free ε′ (G A)
 
 open SimpleHandler public
+
 
 Simple-to-Parameterized :  SimpleHandler ε G → ParameterizedHandler ε ⊤ G
 ret (Simple-to-Parameterized S) x _    = ret S x
@@ -268,6 +269,15 @@ hdl (Simple-to-Parameterized S) op k _ = hdl S op (flip k tt)
 
 handle₀ : ⦃ ε ∼ ε₀ ▸ ε′ ⦄ → SimpleHandler ε₀ G → Free ε A → Free ε′ (G A)
 handle₀ SH = flip (handle (Simple-to-Parameterized SH)) tt
+
+
+record ExplicitSimpleHandler (ε ε′ : Effect) (A : Set) (G : Set → Set) : Set₁ where
+  field ret : ∀ {B} → B → G B
+        hdl : (op : Op ε) (k : Ret ε op → Free ε′ (G A)) → Free ε′ (G A)
+open ExplicitSimpleHandler public
+
+handle₀! : ⦃ w : ε ∼ ε₀ ▸ ε′ ⦄ → ExplicitSimpleHandler ε₀ ε′ A G → Free ε A → Free ε′ (G A)
+handle₀! h = fold (pure ∘ ret h) [ hdl h , impure ] ∘ to-front
 
 
 ----------------------

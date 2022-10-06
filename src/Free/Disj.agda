@@ -5,7 +5,7 @@ open import Data.Empty
 open import Data.Bool
 open import Data.List using (List; _∷_; []; _++_)
 
-open import Free hiding (_>>=_; _>>_)
+open import Free
 
 
 {-
@@ -48,6 +48,5 @@ hdl hDisj or   k = do
   l₁ ← k true
   l₂ ← k false
   pure (l₁ ++ l₂)
-  where open import Free using (_>>=_)
 hdl hDisj fail k = pure []
 

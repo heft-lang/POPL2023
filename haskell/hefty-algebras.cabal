@@ -1,0 +1,70 @@
+cabal-version:      2.4
+name:               hefty-algebras
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             Casper Bach Poulsen
+maintainer:         casperbp@gmail.com
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+library
+    hs-source-dirs:   src
+    exposed-modules:  Examples.YieldOut
+                      Algebraic.NonDet
+                      Algebraic.Yield
+                      Algebraic.Abort
+                      Algebraic.Out
+                      Free
+    build-depends:    base >=4.14 && <5, uu-parsinglib, ListLike
+    default-language: Haskell2010
+    default-extensions: DerivingStrategies
+                        TypeApplications
+                        TypeOperators
+                        RankNTypes
+                        DeriveFunctor
+                        StandaloneDeriving
+                        KindSignatures
+                        EmptyCase
+                        MultiParamTypeClasses
+                        GADTs
+                        FunctionalDependencies
+                        ScopedTypeVariables
+                        QuantifiedConstraints
+                        DataKinds
+                        UndecidableInstances
+                        FlexibleInstances
+                        FlexibleContexts
+                        IncoherentInstances
+                        AllowAmbiguousTypes
+                        LambdaCase
+    ghc-options:      -W
+                      -O3
+                      -threaded
+                    
+executable hefty-algebras-exe
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    base ^>=4.14.3.0, hefty-algebras
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    ghc-options:     -O3
+                     -threaded

@@ -19,7 +19,7 @@ following names when they occur free in type signatures:
 -}
 
 variable a b c : Level
-         A B C P : Set a
+         A B C D X Y Z : Set a
          G : Set → Set
 
 
@@ -245,14 +245,14 @@ from-front ⦃ w = w ⦄ (impure (inj₂ op) k) = impure (inj▸ᵣ op) (from-fr
 --- HANDLERS ---
 ----------------
 
-record ParameterizedHandler (ε : Effect) (P : Set) (G : Set → Set) : Set₁ where
+record ParameterizedHandler (ε : Effect) (X : Set) (G : Set → Set) : Set₁ where
   field
-    ret : {A : Set} → A → P → G A
-    hdl : {A : Set} (op : Op ε) (k : Ret ε op → P → Free ε′ (G A)) → P → Free ε′ (G A)
+    ret : {A : Set} → A → X → G A
+    hdl : {A : Set} (op : Op ε) (k : Ret ε op → X → Free ε′ (G A)) → X → Free ε′ (G A)
 
 open ParameterizedHandler public
 
-handle : ⦃ ε ∼ ε₀ ▸ ε′ ⦄ → ParameterizedHandler ε₀ P G → Free ε A → P → Free ε′ (G A)
+handle : ⦃ ε ∼ ε₀ ▸ ε′ ⦄ → ParameterizedHandler ε₀ X G → Free ε A → X → Free ε′ (G A)
 handle h  =  fold (λ p → pure ∘ ret h p) [ hdl h , (λ op′ k′ → impure op′ ∘ flip k′) ]
              ∘ to-front
 

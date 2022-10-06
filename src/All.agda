@@ -22,6 +22,7 @@ open import Hefty.Nil
 open import Hefty.Lift
 open import Hefty.Catch
 
+{- Both S3 and S5.2 -}
 open import Example.Hefty.Catch+Throw+State
 
 
@@ -32,4 +33,11 @@ open import Law.Hefty.Catch
 
 {- Code corresponding to Section 5 of the paper -}
 
+{- 5.1 -}
 open import Hefty.Lambda
+
+open import Example.Hefty.Lambda+State
+
+{- 5.2: See also Example.Hefty.Catch+Throw+State -}
+
+open import Free.SubJump

@@ -3,6 +3,7 @@ module Hefty.Catch where
 open import Level using (zero)
 open import Function
 open import Data.Empty
+open import Data.Unit
 open import Data.Bool using (Bool; true; false; if_then_else_)
 open import Data.Maybe using (Maybe; just; nothing; maybe)
 open import Data.Universe renaming (Universe to Univ)
@@ -11,9 +12,12 @@ open Univ ⦃ ... ⦄ renaming (U to T; El to ⟦_⟧)
 
 open import Free hiding (_>>=_)
 open import Free.Throw
+open import Free.SubJump
 
 open import Hefty hiding (_>>=_)
 open import Hefty.Lift
+
+open Inverse ⦃ ... ⦄
 
 {-
 Operations
@@ -56,14 +60,6 @@ alg eCatch (catch t) ψ k = let m₁ = ψ true; m₂ = ψ false in
   (♯ (handle₀ hThrow m₁)) >>= maybe k (m₂ >>= k)
   where open import Free using (_>>=_)
 
-{-
-Automatable elaboration
--}
-
-instance
-  eCatch′ : ⦃ u : Universe ⦄ → ⦃ w : ε ∼ Throw ▸ ε′ ⦄ →  Elab (Catch ⦃ u ⦄) ε
-  orate eCatch′ = eCatch
-
 
 {-
 A smarter constructor for ↑ throw
@@ -74,3 +70,22 @@ A smarter constructor for ↑ throw
 ‵throwᴴ ⦃ w ⦄ = (↑ throw) >>= ⊥-elim
   where open import Hefty using (_>>=_)
 
+
+{-
+A (modular) alternative elaboration that supports a transactional state
+semantics of exception handling
+-}
+
+module _ ⦃ u : Universe ⦄
+         {Ref : T → Set}
+         {unit : T}
+         ⦃ iso : ⟦ unit ⟧ ↔ ⊤ ⦄
+         ⦃ w₁ : ε ∼ CC Ref ▸ ε′ ⦄
+         ⦃ w₂ : ε ∼ Throw ▸ ε″ ⦄ where
+
+  eCatchCC : Elaboration Catch ε
+  alg eCatchCC (catch x) ψ k = let m₁ = ψ true; m₂ = ψ false in
+    ‵sub
+      (λ r → (♯ (handle₀ hThrow m₁)) >>= maybe k (‵jump r (from tt)))
+      (λ _ → m₂ >>= k)
+    where open import Free using (_>>=_)

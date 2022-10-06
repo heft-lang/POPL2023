@@ -19,7 +19,7 @@ open import Hefty.Lift
 open import Hefty.Lambda
 open import Hefty.Nil
 
-open import Function.Construct.Identity    using (↔-id)
+open import Function.Construct.Identity using (↔-id)
 
 
 {-

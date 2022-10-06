@@ -9,4 +9,8 @@ To build the artifact, you need the following:
 
 You can type check all of the files in the artifact by loading the file `src/All.agda`.
 
+You can also generate browsable HTML for the artifact, by running the following in the root folder of this artifact:
 
+```
+$ agda src/All.agda --html
+```

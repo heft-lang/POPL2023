@@ -1,0 +1,5 @@
+name: hefty-compilation
+depend:
+include:
+        ./lib/agda-stdlib/src
+        ./src

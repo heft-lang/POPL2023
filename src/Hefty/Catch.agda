@@ -1,7 +1,8 @@
 module Hefty.Catch where
 
-open import Level
+open import Level using (zero)
 open import Function
+open import Data.Empty
 open import Data.Bool using (Bool; true; false; if_then_else_)
 open import Data.Maybe using (Maybe; just; nothing; maybe)
 open import Data.Universe renaming (Universe to Univ)
@@ -10,7 +11,9 @@ open Univ ⦃ ... ⦄ renaming (U to T; El to ⟦_⟧)
 
 open import Free hiding (_>>=_)
 open import Free.Throw
+
 open import Hefty hiding (_>>=_)
+open import Hefty.Lift
 
 {-
 Operations
@@ -60,4 +63,14 @@ Automatable elaboration
 instance
   eCatch′ : ⦃ u : Universe ⦄ → ⦃ w : ε ∼ Throw ▸ ε′ ⦄ →  Elab (Catch ⦃ u ⦄) ε
   orate eCatch′ = eCatch
+
+
+{-
+A smarter constructor for ↑ throw
+-}
+
+‵throwᴴ : ⦃ w : H  ∼  Lift Throw  ▹ H″ ⦄
+         → Hefty H A
+‵throwᴴ ⦃ w ⦄ = (↑ throw) >>= ⊥-elim
+  where open import Hefty using (_>>=_)
 

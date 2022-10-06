@@ -28,3 +28,7 @@ open import Example.Hefty.Catch+Throw+State
 {- Code corresponding to Section 4 of the paper -}
 
 open import Law.Hefty.Catch
+
+
+{- Code corresponding to Section 5 of the paper -}
+

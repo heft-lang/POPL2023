@@ -40,16 +40,6 @@ instance
 
 
 {-
-A smarter constructor for ↑ throw
--}
-
-‵throwᴴ : ⦃ w : H  ∼  Lift Throw  ▹ H″ ⦄
-         → Hefty H A
-‵throwᴴ ⦃ w ⦄ = (↑ throw) >>= ⊥-elim
-  where open import Hefty using (_>>=_)
-
-
-{-
 An example
 -}
 

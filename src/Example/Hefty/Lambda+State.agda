@@ -4,8 +4,8 @@ module Example.Hefty.Lambda+State where
 
 open import Function hiding (_↣_; _⟶_)
 open import Level renaming (zero to ℓ0) using ()
-open import Data.Universe renaming (Universe to Univ)
 open import Data.Nat
+open import Data.Universe renaming (Universe to Univ)
 private Universe = Univ ℓ0 ℓ0
 open Univ ⦃ ... ⦄ renaming (U to T; El to ⟦_⟧)
 open import Relation.Binary.PropositionalEquality

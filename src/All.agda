@@ -33,11 +33,28 @@ open import Law.Hefty.Catch
 
 {- Code corresponding to Section 5 of the paper -}
 
-{- 5.1 -}
+{- 5.1: Lambda as a Higher-Order Effect -}
+
 open import Hefty.Lambda
 
 open import Example.Hefty.Lambda+State
 
-{- 5.2: See also Example.Hefty.Catch+Throw+State -}
+{- 5.2: Optionally Transactional Exception Catching
+        (see also Example.Hefty.Catch+Throw+State) -}
 
 open import Free.SubJump
+
+{- 5.3: Logic Programming -}
+
+open import Free.Disj
+
+open import Hefty.Once
+
+open import Example.Hefty.Disj+Once
+
+{- 5.4: Concurrency -}
+
+
+
+
+

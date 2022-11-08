@@ -3,8 +3,8 @@ module Examples.LambdaState where
 import Hefty
 import Free
 import Elab
-import Algebraic.State
-import HigherOrder.Lambda
+import Free.State
+import Hefty.Lambda
 
 example :: forall fun c.
            Hefty (Lambda c fun ⊕ Lift (State Int) ⊕ Lift Nop) Int

@@ -2,8 +2,8 @@ module Free.Yield where
 
 import Prelude hiding (or)
 import Free
-import Algebraic.NonDet as ND
-import Algebraic.Abort
+import Free.NonDet as ND
+import Free.Abort
 
 data Yield k = Yield k
   deriving Functor

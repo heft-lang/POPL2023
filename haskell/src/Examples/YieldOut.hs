@@ -2,9 +2,9 @@ module Examples.YieldOut where
 
 import Prelude hiding (or)
 import Free
-import Algebraic.Yield
-import Algebraic.Out
-import Algebraic.NonDet
+import Free.Yield
+import Free.Out
+import Free.NonDet
 
 example :: ( Functor f
            , Interleavable (YieldTac + Out + f) )

@@ -38,3 +38,4 @@ eExcept = Alg $ \ x -> case x of
       Just x -> k x
       Nothing -> m2 >>= k
   Throw -> Do $ inj $ Abort
+

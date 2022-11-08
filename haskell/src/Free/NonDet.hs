@@ -1,7 +1,7 @@
 module Free.NonDet where
 
 import Free
-import Algebraic.Abort
+import Free.Abort
 
 data NonDet k = Or (Bool -> k)
   deriving Functor

@@ -3,9 +3,9 @@ module Examples.StateCatch where
 import Hefty
 import Free
 import Elab
-import Algebraic.State
-import Algebraic.Abort
-import HigherOrder.Except
+import Free.State
+import Free.Abort
+import Hefty.Except
 
 example :: Hefty (Lift (State Int) ⊕ Except ⊕ Lift Nop) Int
 example = do

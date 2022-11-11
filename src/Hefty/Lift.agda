@@ -12,16 +12,16 @@ Lifting an algebraic effect to a higher-order effect
 -}
 
 Lift : Effect → Effectᴴ
-Op     (Lift ε)    = Op ε
-Fork   (Lift ε) _  = Nil
-Ret    (Lift ε)    = Ret ε
+Opᴴ     (Lift Δ)    = Op Δ
+Forkᴴ   (Lift Δ) _  = Nil
+Retᴴ    (Lift Δ)    = Ret Δ
 
 
 {-
 Smart constructor
 -}
 
-↑_ : ⦃ w : H ∼ Lift ε ▹ H′ ⦄ → (op : Op ε) → Hefty H (Ret ε op)
+↑_ : ⦃ w : H ∼ Lift Δ ▹ H′ ⦄ → (op : Op Δ) → Hefty H (Ret Δ op)
 ↑_ ⦃ w ⦄ op =
   impure (inj▹ₗ ⦃ w ⦄ op) (proj-fork▹ₗ ⦃ w ⦄ (λ b → ⊥-elim b)) (pure ∘ proj-ret▹ₗ ⦃ w ⦄)
 
@@ -30,7 +30,7 @@ Smart constructor
 A (modular) elaboration
 -}
 
-eLift : ⦃ ε ∼ ε₀ ▸ ε′ ⦄ → Elaboration (Lift ε₀) ε
+eLift : ⦃ Δ ∼ Δ₀ ▸ Δ′ ⦄ → Elaboration (Lift Δ₀) Δ
 alg (eLift ⦃ w ⦄) op ψ k = impure (inj▸ₗ op) (k ∘ proj-ret▸ₗ ⦃ w ⦄)
 
 
@@ -39,6 +39,6 @@ Automatable elaboration
 -}
 
 instance
-  eLift′ : ⦃ ε ∼ ε₀ ▸ ε′ ⦄ → Elab (Lift ε₀) ε
+  eLift′ : ⦃ Δ ∼ Δ₀ ▸ Δ′ ⦄ → Elab (Lift Δ₀) Δ
   orate eLift′ = eLift
 

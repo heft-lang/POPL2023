@@ -6,7 +6,7 @@ open import Hefty
 open import Hefty.Lift
 
 
-eNil : Elaboration (Lift Nil) ε
+eNil : Elaboration (Lift Nil) Δ
 alg eNil ()
 
 
@@ -15,6 +15,6 @@ Automatable elaboration
 -}
 
 instance
-  eNil′ : Elab (Lift Nil) ε
+  eNil′ : Elab (Lift Nil) Δ
   orate eNil′ = eNil
 

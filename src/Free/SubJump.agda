@@ -7,6 +7,7 @@ module Free.SubJump where
 
 open import Function
 open import Level using (zero)
+open import Data.Unit
 open import Data.Empty
 open import Data.Sum
 open import Data.Universe renaming (Universe to Univ)
@@ -37,13 +38,13 @@ Ret (CC Ref) (jump ref x)  = ⊥
 {-
 Smart constructors
 -}
-module _ ⦃ u : Universe ⦄ {Ref : T → Set} ⦃ w : ε ∼ CC Ref ▸ ε′ ⦄ where
-  ‵sub   : {t : T} → (Ref t → Free ε A) → (⟦ t ⟧ → Free ε A)  → Free ε A
+module _ ⦃ u : Universe ⦄ {Ref : T → Set} ⦃ w : Δ ∼ CC Ref ▸ Δ′ ⦄ where
+  ‵sub   : {t : T} → (Ref t → Free Δ A) → (⟦ t ⟧ → Free Δ A)  → Free Δ A
   ‵sub b k = impure
     (inj▸ₗ ⦃ w ⦄ sub)
     ([ b , k ] ∘  proj-ret▸ₗ ⦃ w ⦄)
 
-  ‵jump  : {t : T} → Ref t → ⟦ t ⟧                            → Free ε B
+  ‵jump  : {t : T} → Ref t → ⟦ t ⟧                            → Free Δ B
   ‵jump ref x = impure
     (inj▸ₗ (jump ref x))
     (⊥-elim ∘ proj-ret▸ₗ ⦃ w ⦄)
@@ -53,8 +54,8 @@ module _ ⦃ u : Universe ⦄ {Ref : T → Set} ⦃ w : ε ∼ CC Ref ▸ ε′ 
 Handler
 -}
 
-hCC : ⦃ u : Universe ⦄ → ExplicitSimpleHandler (CC (λ t → ⟦ t ⟧ → Free ε′ A)) ε′ A id
-ret  hCC                  = id
-hdl  hCC sub           k  = let c = k ∘ inj₂ in k (inj₁ c)
-hdl  hCC (jump ref x)  k  = ref x
+hCC : ⦃ u : Universe ⦄ → ⟨ A ! (CC (λ t → ⟦ t ⟧ → Free Δ′ A)) ⇒ ⊤ ⇒ A ! Δ′ ⟩
+ret  hCC x _                = pure x
+hdl  hCC sub           k p  = let c = flip k p ∘ inj₂ in k (inj₁ c) p
+hdl  hCC (jump ref x)  k p  = ref x
 

@@ -45,11 +45,9 @@ open import Free.SubJump
 
 {- 5.3: Logic Programming -}
 
-open import Free.Disj
-
 open import Hefty.Once
 
-open import Example.Hefty.Disj+Once
+open import Example.Hefty.Choice+Once
 
 {- 5.4: Concurrency -}
 

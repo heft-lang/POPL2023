@@ -11,7 +11,7 @@ open import Data.Maybe using (just; nothing)
 open import Data.Nat
 open import Data.Universe renaming (Universe to Univ)
 private Universe = Univ ℓ0 ℓ0
-open Univ ⦃ ... ⦄ renaming (U to T; El to ⟦_⟧)
+open Univ ⦃ ... ⦄ renaming (U to Ty; El to ⟦_⟧)
 open import Relation.Binary.PropositionalEquality
 open import Function.Construct.Identity using (↔-id)
 
@@ -33,7 +33,7 @@ A universe of types polymorphic program with state and exceptions.  Under a
 "transactional state" semantics of exception handling, the program returns 1.
 -}
 
-module _ ⦃ u : Universe ⦄ {unit : T} ⦃ iso : ⟦ unit ⟧ ↔ ⊤ ⦄ where
+module _ ⦃ u : Universe ⦄ {unit : Ty} ⦃ iso : ⟦ unit ⟧ ↔ ⊤ ⦄ where
 
   open import Hefty using (_>>=_; _>>_)
   open Inverse ⦃ ... ⦄
@@ -57,7 +57,7 @@ data Type : Set where
 
 instance
   TypeUniverse : Universe
-  T  ⦃ TypeUniverse ⦄ = Type
+  Ty  ⦃ TypeUniverse ⦄ = Type
   ⟦_⟧ ⦃ TypeUniverse ⦄ unit = ⊤
   ⟦_⟧ ⦃ TypeUniverse ⦄ num  = ℕ
 
@@ -90,7 +90,9 @@ module GlobalStateInterpretation where
   Test showing that the program has a global state semantics
   -}
 
-  test-transact : end (handle₀ hThrow (handle hSt (elaborate transact-elab′ transact) 0))
+  test-transact : un ( ( given hThrow
+                         handle ( ( given hSt
+                                    handle (elaborate transact-elab′ transact) ) 0) ) tt )
                   ≡ just 2
   test-transact = refl
 
@@ -99,7 +101,7 @@ module GlobalStateInterpretation where
   An alternative elaboration for catch
   -}
 
-  eCatch₁ : ⦃ u : Universe ⦄ ⦃ w : ε ∼ Throw ▸ ε′ ⦄ →  Elaboration (Catch ⦃ TypeUniverse ⦄) ε
+  eCatch₁ : ⦃ u : Universe ⦄ ⦃ w : Δ ∼ Throw ▸ Δ′ ⦄ →  Elaboration (Catch ⦃ TypeUniverse ⦄) Δ
   alg eCatch₁ (catch t) ψ k = (ψ true) >>= k
     where open import Free using (_>>=_)
 
@@ -112,7 +114,9 @@ module GlobalStateInterpretation where
   an interface whose operational implementation we can change, modularly.
   -}
 
-  test-transact₁ : end (handle₀ hThrow (handle hSt (elaborate transact-elab₁ transact) 0))
+  test-transact₁ : un ( ( given hThrow
+                         handle ( ( given hSt
+                                    handle (elaborate transact-elab₁ transact) ) 0) ) tt )
                    ≡ nothing
   test-transact₁ = refl
 
@@ -144,7 +148,10 @@ module TransactionalStateInterpretation where
   Running the state handler before throw gives a transactional state interpretation
   -}
 
-  test-transact₂ :  end (handle₀! hCC (handle₀ hThrow (handle hSt (elab transact-elab₂ transact) 0)))
+  test-transact₂ :  un ( ( given hCC
+                           handle ( given hThrow
+                                    handle ( ( given hSt
+                                               handle (elab transact-elab₂ transact) ) 0) ) tt ) tt )
                       ≡ just 1
   test-transact₂ = refl
 
@@ -152,7 +159,11 @@ module TransactionalStateInterpretation where
   Running the throw handler before the state handler gives a global state interpretation
   -}
 
-  test-transact₃ : end (handle hSt (handle₀! hCC (handle₀ hThrow (elab transact-elab₃ transact))) 0) ≡ just 2
+  test-transact₃ :  un ( ( given hSt
+                           handle ( given hCC
+                                    handle ( ( given hThrow
+                                               handle (elab transact-elab₃ transact) ) tt) ) tt ) 0 )
+                      ≡ just 2
   test-transact₃ = refl
 
 
@@ -168,10 +179,18 @@ module TransactionalStateInterpretation where
     ↑ get
     where open import Hefty using (_>>_)
 
-  test-transact₂′ : end (handle₀! hCC (handle₀ hThrow (handle hSt (elab transact-elab₂ transact′) 0))) ≡ just 2
+  test-transact₂′ : un ( ( given hCC
+                           handle ( given hThrow
+                                    handle ( ( given hSt
+                                               handle (elab transact-elab₂ transact′) ) 0) ) tt ) tt )
+                      ≡ just 2
   test-transact₂′ = refl
 
-  test-transact₃′ : end (handle hSt (handle₀! hCC (handle₀ hThrow (elab transact-elab₃ transact′))) 0) ≡ just 2
+  test-transact₃′ : un ( ( given hSt
+                           handle ( given hCC
+                                    handle ( ( given hThrow
+                                               handle (elab transact-elab₃ transact′) ) tt) ) tt ) 0 )
+                      ≡ just 2
   test-transact₃′ = refl
 
 
@@ -182,8 +201,16 @@ module TransactionalStateInterpretation where
     ‵catch (do ↑ put 2; ‵throwᴴ) (↑ get)
     where open import Hefty using (_>>_)
 
-  test-transact₂″ : end (handle₀! hCC (handle₀ hThrow (handle hSt (elab transact-elab₂ transact″) 0))) ≡ just 1
+  test-transact₂″ : un ( ( given hCC
+                           handle ( given hThrow
+                                    handle ( ( given hSt
+                                               handle (elab transact-elab₂ transact″) ) 0) ) tt ) tt )
+                      ≡ just 1
   test-transact₂″ = refl
 
-  test-transact₃″ : end (handle hSt (handle₀! hCC (handle₀ hThrow (elab transact-elab₃ transact″))) 0) ≡ just 2
+  test-transact₃″ : un ( ( given hSt
+                           handle ( given hCC
+                                    handle ( ( given hThrow
+                                               handle (elab transact-elab₃ transact″) ) tt) ) tt ) 0 )
+                      ≡ just 2
   test-transact₃″ = refl

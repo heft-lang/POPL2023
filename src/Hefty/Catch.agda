@@ -8,7 +8,7 @@ open import Data.Bool using (Bool; true; false; if_then_else_)
 open import Data.Maybe using (Maybe; just; nothing; maybe)
 open import Data.Universe renaming (Universe to Univ)
 private Universe = Univ zero zero
-open Univ ⦃ ... ⦄ renaming (U to T; El to ⟦_⟧)
+open Univ ⦃ ... ⦄ renaming (U to Ty; El to ⟦_⟧)
 
 open import Free hiding (_>>=_)
 open import Free.Throw
@@ -32,17 +32,17 @@ Effect signature
 -}
 
 Catch : ⦃ u : Universe ⦄ → Effectᴴ
-Op     Catch = CatchOp T
-Fork   Catch (catch t)  = record
+Opᴴ     Catch = CatchOp Ty
+Forkᴴ   Catch (catch t)  = record
   { Op = Bool; Ret = λ _ → ⟦ t ⟧ }
-Ret    Catch (catch t)  = ⟦ t ⟧
+Retᴴ    Catch (catch t)  = ⟦ t ⟧
 
 
 {-
 Smart constructor
 -}
 
-‵catch   : ⦃ u : Universe ⦄ ⦃ w : H ∼ Catch ▹ H′ ⦄ {t : T} 
+‵catch   : ⦃ u : Universe ⦄ ⦃ w : H ∼ Catch ▹ H′ ⦄ {t : Ty} 
          → Hefty H ⟦ t ⟧ → Hefty H ⟦ t ⟧  → Hefty H ⟦ t ⟧
 ‵catch ⦃ w = w ⦄ m₁ m₂  =
   impure
@@ -55,9 +55,9 @@ Smart constructor
 A (modular) elaboration
 -}
 
-eCatch : ⦃ u : Universe ⦄ ⦃ w : ε ∼ Throw ▸ ε′ ⦄ →  Elaboration Catch ε
+eCatch : ⦃ u : Universe ⦄ ⦃ w : Δ ∼ Throw ▸ Δ′ ⦄ →  Elaboration Catch Δ
 alg eCatch (catch t) ψ k = let m₁ = ψ true; m₂ = ψ false in
-  (♯ (handle₀ hThrow m₁)) >>= maybe k (m₂ >>= k)
+  (♯ ((given hThrow handle m₁) tt)) >>= maybe k (m₂ >>= k)
   where open import Free using (_>>=_)
 
 
@@ -77,15 +77,15 @@ semantics of exception handling
 -}
 
 module _ ⦃ u : Universe ⦄
-         {Ref : T → Set}
-         {unit : T}
+         {Ref : Ty → Set}
+         {unit : Ty}
          ⦃ iso : ⟦ unit ⟧ ↔ ⊤ ⦄
-         ⦃ w₁ : ε ∼ CC Ref ▸ ε′ ⦄
-         ⦃ w₂ : ε ∼ Throw ▸ ε″ ⦄ where
+         ⦃ w₁ : Δ ∼ CC Ref ▸ Δ′ ⦄
+         ⦃ w₂ : Δ ∼ Throw ▸ Δ″ ⦄ where
 
-  eCatchCC : Elaboration Catch ε
+  eCatchCC : Elaboration Catch Δ
   alg eCatchCC (catch x) ψ k = let m₁ = ψ true; m₂ = ψ false in
     ‵sub
-      (λ r → (♯ (handle₀ hThrow m₁)) >>= maybe k (‵jump r (from tt)))
+      (λ r → (♯ ((given hThrow handle m₁) tt)) >>= maybe k (‵jump r (from tt)))
       (λ _ → m₂ >>= k)
     where open import Free using (_>>=_)

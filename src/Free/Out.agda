@@ -3,7 +3,7 @@ module Free.Out where
 open import Function
 open import Data.Unit
 open import Data.Product
-open import Data.List
+open import Data.String
 
 open import Free
 
@@ -12,31 +12,31 @@ open import Free
 Operation
 -}
 
-data OutOp X : Set where
-  out : X → OutOp X
+data OutOp : Set where
+  out : String → OutOp
 
 
 {-
 Effect signature
 -}
 
-Out : Set → Effect
-Op (Out X) = OutOp X
-Ret (Out X) (out _) = ⊤
+Output : Effect
+Op Output = OutOp
+Ret Output (out s) = ⊤
 
 
 {-
 Smart constructor
 -}
 
-‵out : ⦃ ε ∼ Out X ▸ ε′ ⦄ → X → Free ε ⊤
-‵out ⦃ w ⦄ x = impure (inj▸ₗ (out x)) (pure ∘ proj-ret▸ₗ ⦃ w ⦄)
+‵out : ⦃ Δ ∼ Output ▸ Δ′ ⦄ → String → Free Δ ⊤
+‵out ⦃ w ⦄ s = impure (inj▸ₗ (out s)) (pure ∘ proj-ret▸ₗ ⦃ w ⦄)
 
 
 {-
 Handler
 -}
 
-hOut : SimpleHandler (Out X) (_× List X)
-ret  hOut x          = x , []
-hdl  hOut (out x) k  = do (v , xs) ← k tt; pure (v , x ∷ xs)
+hOut : ⟨ A ! Output ⇒ P ⇒ (A × String) ! Δ′ ⟩
+ret  hOut x _          = pure (x , "")
+hdl  hOut (out s) k p  = do (v , s′) ← k tt p; pure (v , s ++ s′)

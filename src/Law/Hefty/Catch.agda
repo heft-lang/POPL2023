@@ -4,6 +4,7 @@ module Law.Hefty.Catch where
 
 open import Function
 open import Data.Empty
+open import Data.Unit
 open import Level renaming (zero to ℓ0) using ()
 open import Data.Maybe using (Maybe; just; nothing; maybe)
 open import Data.Sum
@@ -65,7 +66,7 @@ module _ {H : Effectᴴ} {ε : Effect} (E : Elaboration H (Throw ⊕ ε)) where
   private
     h : ∀ {A} ⦃ u : Universe ⦄
         → Free (Throw ⊕ ε) A → Free ε (Maybe A)
-    h = handle₀ hThrow
+    h m = (given hThrow handle m) tt
 
     e : ∀ {A} ⦃ u : Universe ⦄
         → Hefty (Lift Throw ∔ Catch ∔ H) A → Free (Throw ⊕ ε) A
@@ -92,12 +93,11 @@ module _ {H : Effectᴴ} {ε : Effect} (E : Elaboration H (Throw ⊕ ε)) where
       h (e (‵catch m ‵throwᴴ))
     ≡⟨ refl ⟩
       h ((♯ h (e m)) >>= maybe pure ((e ‵throwᴴ) >>= pure))
-    ≡⟨ cong (λ P → h ((♯ h (e m)) >>= P))
-         (extensionality (λ x →
-           cong (λ P → maybe pure P x)
-             (trans  (Free-unitᵣ-≡ (e ‵throwᴴ))
-                     (cong (impure (inj₁ throw))
-                       (extensionality (λ x → ⊥-elim x)))))) ⟩
+      ≡⟨ cong (λ P → h ((♯ h (e m)) >>= P))
+           (extensionality (λ x →
+             cong (λ P → maybe pure P x)
+               (cong (impure (inj₁ throw))
+                     (extensionality (λ x → ⊥-elim x))))) ⟩
       h ((♯ h (e m)) >>= maybe pure ‵throw)
     ≡⟨ catch-throw-lem (e m) ⟩
       h (e m) ∎
@@ -106,7 +106,7 @@ module _ {H : Effectᴴ} {ε : Effect} (E : Elaboration H (Throw ⊕ ε)) where
       
       catch-throw-lem : (m : Free (Throw ⊕ _) A)
                       → h ((♯ h m) >>= maybe pure ‵throw)
-                        ≡ handle₀ hThrow m
+                        ≡ (given hThrow handle m) tt
       catch-throw-lem (pure x)                = refl
       catch-throw-lem (impure (inj₁ throw) k) = refl
       catch-throw-lem (impure (inj₂ y) k) = cong (impure y) (extensionality (λ x → catch-throw-lem (k x)))
@@ -158,8 +158,9 @@ module _ {H : Effectᴴ} {ε : Effect} (E : Elaboration H (Throw ⊕ ε)) where
      maybe-distr (just x) f b g = refl
      maybe-distr nothing  f b g = refl
 
-     hThrow-bind-distr : (m : Free (Throw ⊕ ε) A) (k : A → Free (Throw ⊕ ε) B)
-                       → handle₀ hThrow (m >>=ᶠ k) ≡ (handle₀ hThrow m) >>=ᶠ maybe (handle₀ hThrow ∘ k) (pure nothing)
+     hThrow-bind-distr : (m : Free (Throw ⊕ Δ) A) (k : A → Free (Throw ⊕ Δ) B)
+                       → (given hThrow handle (m >>=ᶠ k)) tt
+                         ≡ (given hThrow handle m) tt >>=ᶠ maybe (λ x → (given hThrow handle (k x)) tt) (pure nothing)
      hThrow-bind-distr (pure x) k = refl
      hThrow-bind-distr (impure (inj₁ throw) k₁) k = refl
      hThrow-bind-distr (impure (inj₂ y) k₁) k = cong (impure y) (extensionality (λ x → hThrow-bind-distr (k₁ x) k))
@@ -169,23 +170,23 @@ module _ {H : Effectᴴ} {ε : Effect} (E : Elaboration H (Throw ⊕ ε)) where
 The usual, non-modular, abbreviation of catch is also lawful
 -}
 
-catchᴬ : ⦃ w : ε ∼ Throw ▸ ε′ ⦄ → Free ε A → Free ε A → Free ε A
-catchᴬ m₁ m₂ = (♯ (handle₀ hThrow m₁)) >>= (maybe pure m₂)
+catchᴬ : ⦃ w : Δ ∼ Throw ▸ Δ′ ⦄ → Free Δ A → Free Δ A → Free Δ A
+catchᴬ m₁ m₂ = (♯ ((given hThrow handle m₁) tt)) >>= (maybe pure m₂)
   where open import Free using (_>>=_)
 
-module _ {ε : Effect} where
+module _ {Δ : Effect} where
 
   open import Free using (_>>=_)
 
-  h : ∀ {A} → Free (Throw ⊕ ε) A → Free ε (Maybe A)
-  h = handle₀ hThrow
+  h : ∀ {A} → Free (Throw ⊕ Δ) A → Free Δ (Maybe A)
+  h m = (given hThrow handle m) tt
 
   CatchImpl₁  : ⦃ u : Universe ⦄
-              →  CatchIntf (Free (Throw ⊕ ε)) pure _>>=_
+              →  CatchIntf (Free (Throw ⊕ Δ)) pure _>>=_
   u    (CatchImpl₁ ⦃ u ⦄) = u
   𝑡ℎ𝑟𝑜𝑤 CatchImpl₁         = ‵throw
   𝑐𝑎𝑡𝑐ℎ CatchImpl₁         = catchᴬ
-  R    CatchImpl₁         = Free ε ∘ Maybe
+  R    CatchImpl₁         = Free Δ ∘ Maybe
   run  CatchImpl₁         = h
   bind-throw    CatchImpl₁ k   = refl
   catch-return  CatchImpl₁ x m = refl
@@ -197,9 +198,9 @@ module _ {ε : Effect} where
     ≡⟨ catch-throw-lem m ⟩
       h m ∎
     where
-      catch-throw-lem : (m : Free (Throw ⊕ ε) A)
+      catch-throw-lem : (m : Free (Throw ⊕ Δ) A)
                       → h ((♯ h m) >>= maybe pure ‵throw)
-                        ≡ handle₀ hThrow m
+                        ≡ (given hThrow handle m) tt
       catch-throw-lem (pure x) = refl
       catch-throw-lem (impure (inj₁ throw) k) = refl
       catch-throw-lem (impure (inj₂ y) k) = cong (impure y) (extensionality (λ x → catch-throw-lem (k x)))
@@ -244,7 +245,7 @@ module _ {ε : Effect} where
       maybe-distr (just x) f b g = refl
       maybe-distr nothing f b g = refl
 
-      h-distr : (m : Free (Throw ⊕ ε) A) (k : A → Free (Throw ⊕ ε) B)
+      h-distr : (m : Free (Throw ⊕ Δ) A) (k : A → Free (Throw ⊕ Δ) B)
               → h (m >>= k) ≡ (h m) >>= maybe (h ∘ k) (pure nothing)
       h-distr (pure x) k = refl
       h-distr (impure (inj₁ throw) k₁) k = refl

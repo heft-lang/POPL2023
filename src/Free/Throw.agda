@@ -2,6 +2,7 @@ module Free.Throw where
 
 open import Function
 open import Data.Empty
+open import Data.Unit
 open import Data.Maybe
 
 open import Free
@@ -28,7 +29,7 @@ Ret Throw throw = ⊥
 Smart constructor.
 -}
 
-‵throw : ⦃ ε ∼ Throw ▸ ε′ ⦄ → Free ε A
+‵throw : ⦃ Δ ∼ Throw ▸ Δ′ ⦄ → Free Δ A
 ‵throw ⦃ w ⦄ = impure (inj▸ₗ throw) (⊥-elim ∘ proj-ret▸ₗ ⦃ w ⦄)
 
 
@@ -36,6 +37,6 @@ Smart constructor.
 Handler
 -}
 
-hThrow : SimpleHandler Throw Maybe
-ret  hThrow          = just
-hdl  hThrow throw k  = pure nothing
+hThrow : ⟨ A ! Throw ⇒ ⊤ ⇒ (Maybe A) ! Δ′ ⟩
+ret  hThrow x _       = pure (just x)
+hdl  hThrow throw k _ = pure nothing

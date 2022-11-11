@@ -16,5 +16,5 @@ Ret  Nil = ⊥-elim
 {-
 Handling the empty effect
 -}
-end : Free Nil A → A
-end (pure x) = x
+un : Free Nil A → A
+un (pure x) = x

@@ -7,7 +7,7 @@ open import Level renaming (zero to ℓ0) using ()
 open import Data.Nat
 open import Data.Universe renaming (Universe to Univ)
 private Universe = Univ ℓ0 ℓ0
-open Univ ⦃ ... ⦄ renaming (U to T; El to ⟦_⟧)
+open Univ ⦃ ... ⦄ renaming (U to Ty; El to ⟦_⟧)
 open import Relation.Binary.PropositionalEquality
 
 open import Free hiding (_>>=_; _>>_)
@@ -26,7 +26,7 @@ open import Function.Construct.Identity using (↔-id)
 A universe of types polymorphic test program
 -}
 
-module _ ⦃ u : LamUniverse ⦄ {num : T}
+module _ ⦃ u : LamUniverse ⦄ {num : Ty}
          ⦃ iso₁ : ⟦ num ⟧ ↔ ℕ ⦄ where
 
   open import Hefty using (_>>=_; _>>_)
@@ -59,7 +59,7 @@ module CBVInterpretation where
 
   private instance
     CBVUniverse : Universe
-    T ⦃ CBVUniverse ⦄ = Type
+    Ty ⦃ CBVUniverse ⦄ = Type
     ⟦_⟧ ⦃ CBVUniverse ⦄ (t ⟶ t₁)  = ⟦ t ⟧ → Free (State ⊕ Nil) ⟦ t₁ ⟧
     ⟦_⟧ ⦃ CBVUniverse ⦄ num       = ℕ
 
@@ -95,7 +95,7 @@ module CBVInterpretation where
   {-
   The program evaluates using a call-by-value interpretation
   -}
-  test-ex-cbv : end (handle hSt (elab elab-cbv ex) 0) ≡ 4
+  test-ex-cbv : un ((given hSt handle (elab elab-cbv ex)) 0) ≡ 4
   test-ex-cbv = refl
 
 
@@ -116,7 +116,7 @@ module CBNInterpretation where
 
   private instance
     CBNUniverse : Universe
-    T ⦃ CBNUniverse ⦄ = Type
+    Ty ⦃ CBNUniverse ⦄ = Type
     ⟦_⟧ ⦃ CBNUniverse ⦄ (t ⟶ t₁)  = ⟦ t ⟧ → Free (State ⊕ Nil) ⟦ t₁ ⟧
     ⟦_⟧ ⦃ CBNUniverse ⦄ num        = ℕ
     ⟦_⟧ ⦃ CBNUniverse ⦄ (susp t)   = Free (State ⊕ Nil) ⟦ t ⟧
@@ -134,7 +134,7 @@ module CBNInterpretation where
             → (⟦ t₁ ⟧ → Free (State ⊕ Nil) ⟦ t₂ ⟧) ↔ ⟦ t₁ ⟶ t₂ ⟧
     iso-fun = ↔-id _
 
-    iso-susp : {t : T}
+    iso-susp : {t : Ty}
              → Free (State ⊕ Nil) ⟦ t ⟧ ↔ ⟦ susp t ⟧
     iso-susp = ↔-id _
 
@@ -155,6 +155,6 @@ module CBNInterpretation where
   {-
   The program evaluates using a call-by-value interpretation
   -}
-  test-ex-cbv : end (handle hSt (elab elab-cbn ex) 0) ≡ 5
+  test-ex-cbv : un ((given hSt handle (elab elab-cbn ex)) 0) ≡ 5
   test-ex-cbv = refl
 

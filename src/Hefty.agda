@@ -34,9 +34,9 @@ describing the shape of sub-computations with each operation, and a function
 -}
 
 record Effectᴴ : Set₁ where
-  field  Op     : Set
-         Fork   : Op → Effect
-         Ret    : Op → Set
+  field  Opᴴ     : Set
+         Forkᴴ   : Opᴴ → Effect
+         Retᴴ    : Opᴴ → Set
 
 open Effectᴴ public
 
@@ -50,9 +50,9 @@ Higher-order effects can be summed by taking their (disjoint) union.
 infixr 12 _∔_
 
 _∔_ : Effectᴴ → Effectᴴ → Effectᴴ
-Op     (H₁ ∔ H₂)                = Op H₁ ⊎ Op H₂
-Fork   (H₁ ∔ H₂)                = [ Fork H₁  , Fork H₂  ]
-Ret    (H₁ ∔ H₂)                = [ Ret H₁   , Ret H₂   ]
+Opᴴ     (H₁ ∔ H₂)                = Opᴴ H₁ ⊎ Opᴴ H₂
+Forkᴴ   (H₁ ∔ H₂)                = [ Forkᴴ H₁  , Forkᴴ H₂  ]
+Retᴴ    (H₁ ∔ H₂)                = [ Retᴴ H₁   , Retᴴ H₂   ]
 
 
 -------------------
@@ -69,9 +69,9 @@ value of the return type of the `op`eration.
 
 data Hefty (H : Effectᴴ) (A : Set) : Set where
   pure    :  A → Hefty H A
-  impure  :  (op  : Op H)
-             (ψ   : (s : Op (Fork H op)) → Hefty H (Ret (Fork H op) s))
-             (k   : Ret H op → Hefty H A)
+  impure  :  (op  : Opᴴ H)
+             (ψ   : (s : Op (Forkᴴ H op)) → Hefty H (Ret (Forkᴴ H op) s))
+             (k   : Retᴴ H op → Hefty H A)
           →  Hefty H A
 
 
@@ -81,14 +81,14 @@ A hefty algebra (`Alg`)
 
 -}
 
-record Alg (H : Effectᴴ) (G : Set → Set) : Set₁ where
+record Algᴴ (H : Effectᴴ) (G : Set → Set) : Set₁ where
   constructor mkAlg
-  field alg  :  (op  : Op H)
-                (ψ   : (s : Op (Fork H op)) → G (Ret (Fork H op) s))
-                (k   : Ret H op → G A)
+  field alg  :  (op  : Opᴴ H)
+                (ψ   : (s : Op (Forkᴴ H op)) → G (Ret (Forkᴴ H op) s))
+                (k   : Retᴴ H op → G A)
              →  G A
 
-open Alg public
+open Algᴴ public
 
 
 {-
@@ -96,7 +96,7 @@ The free monad can be folded using the following recursion scheme
 (catamorphism):
 -}
 
-cataᴴ : (∀ {A} → A → F A) → Alg H F → Hefty H A → F A
+cataᴴ : (∀ {A} → A → F A) → Algᴴ H F → Hefty H A → F A
 cataᴴ g a (pure x)         = g x
 cataᴴ g a (impure op ψ k)  = alg a op (cataᴴ g a ∘ ψ) (cataᴴ g a ∘ k)
 
@@ -170,117 +170,117 @@ Some helper functions and lemmas using row insertion witnesses.
 (Only a subset of these are actually used in this artifact.)
 -}
 
-inj▹ₗ : ⦃ H ∼ H₀ ▹ H′ ⦄ → Op H₀  → Op H
+inj▹ₗ : ⦃ H ∼ H₀ ▹ H′ ⦄ → Opᴴ H₀ → Opᴴ H
 inj▹ₗ ⦃ insert ⦄  = inj₁
 inj▹ₗ ⦃ sift p ⦄  = inj₂ ∘ inj▹ₗ ⦃ p ⦄
 
-inj▹ᵣ : ⦃ H ∼ H₀ ▹ H′ ⦄ → Op H′  → Op H
+inj▹ᵣ : ⦃ H ∼ H₀ ▹ H′ ⦄ → Opᴴ H′ → Opᴴ H
 inj▹ᵣ ⦃ insert ⦄  = inj₂
 inj▹ᵣ ⦃ sift p ⦄  = [ inj₁ , inj₂ ∘ inj▹ᵣ ⦃ p ⦄ ]
 
 
 
-inj▹ₗ-ret≡ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ (op : Op H₀)
-           → Ret H (inj▹ₗ op) ≡ Ret H₀ op
+inj▹ₗ-ret≡ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ (op : Opᴴ H₀)
+           → Retᴴ H (inj▹ₗ op) ≡ Retᴴ H₀ op
 inj▹ₗ-ret≡ ⦃ insert ⦄ _  = refl
 inj▹ₗ-ret≡ ⦃ sift p ⦄    = inj▹ₗ-ret≡ ⦃ p ⦄
 
-inj▹ᵣ-ret≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ (op : Op H′)
-          → Ret H (inj▹ᵣ op) ≡ Ret H′ op
+inj▹ᵣ-ret≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ (op : Opᴴ H′)
+          → Retᴴ H (inj▹ᵣ op) ≡ Retᴴ H′ op
 inj▹ᵣ-ret≡ ⦃ insert ⦄ op  = refl
 inj▹ᵣ-ret≡ ⦃ sift p ⦄     = [ (λ _ → refl) , inj▹ᵣ-ret≡ ⦃ p ⦄ ]
 
-inj▹ₗ-fork≡ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ (op : Op H₀)
-              → Fork H (inj▹ₗ op) ≡ Fork H₀ op
+inj▹ₗ-fork≡ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ (op : Opᴴ H₀)
+              → Forkᴴ H (inj▹ₗ op) ≡ Forkᴴ H₀ op
 inj▹ₗ-fork≡ ⦃ insert ⦄ _  = refl
 inj▹ₗ-fork≡ ⦃ sift p ⦄    = inj▹ₗ-fork≡ ⦃ p ⦄
 
-inj▹ᵣ-fork≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ (op : Op H′)
-              → Fork H (inj▹ᵣ op) ≡ Fork H′ op
+inj▹ᵣ-fork≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ (op : Opᴴ H′)
+              → Forkᴴ H (inj▹ᵣ op) ≡ Forkᴴ H′ op
 inj▹ᵣ-fork≡ ⦃ insert ⦄ op  = refl
 inj▹ᵣ-fork≡ ⦃ sift p ⦄     = [ (λ _ → refl) , inj▹ᵣ-fork≡ ⦃ p ⦄ ]
 
-inj▹ₗ-prong≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Op H₀} (b : Op (Fork H (inj▹ₗ op)))
-              → Ret (Fork H (inj▹ₗ op)) b ≡ Ret (Fork H₀ op) (subst Op (inj▹ₗ-fork≡ ⦃ p ⦄ op) b)
+inj▹ₗ-prong≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H₀} (b : Op (Forkᴴ H (inj▹ₗ op)))
+              → Ret (Forkᴴ H (inj▹ₗ op)) b ≡ Ret (Forkᴴ H₀ op) (subst Op (inj▹ₗ-fork≡ ⦃ p ⦄ op) b)
 inj▹ₗ-prong≡ ⦃ insert ⦄ op  = refl
 inj▹ₗ-prong≡ ⦃ p = sift p ⦄ {op} b = inj▹ₗ-prong≡ ⦃ p ⦄ b
 
-inj▹ₗ-prong2≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Op H₀} (b : Op (Fork H₀ op))
-              → Ret (Fork H₀ op) b ≡ Ret (Fork H (inj▹ₗ op)) (subst Op (sym $ inj▹ₗ-fork≡ ⦃ p ⦄ op) b)
+inj▹ₗ-prong2≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H₀} (b : Op (Forkᴴ H₀ op))
+              → Ret (Forkᴴ H₀ op) b ≡ Ret (Forkᴴ H (inj▹ₗ op)) (subst Op (sym $ inj▹ₗ-fork≡ ⦃ p ⦄ op) b)
 inj▹ₗ-prong2≡ ⦃ insert ⦄ op  = refl
 inj▹ₗ-prong2≡ ⦃ p = sift p ⦄ {op} b = inj▹ₗ-prong2≡ ⦃ p ⦄ b
 
-inj▹ᵣ-prong2≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Op H′} (b : Op (Fork H′ op))
-              → Ret (Fork H′ op) b ≡ Ret (Fork H (inj▹ᵣ op)) (subst Op (sym $ inj▹ᵣ-fork≡ ⦃ p ⦄ op) b)
+inj▹ᵣ-prong2≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H′} (b : Op (Forkᴴ H′ op))
+              → Ret (Forkᴴ H′ op) b ≡ Ret (Forkᴴ H (inj▹ᵣ op)) (subst Op (sym $ inj▹ᵣ-fork≡ ⦃ p ⦄ op) b)
 inj▹ᵣ-prong2≡ ⦃ insert ⦄ op  = refl
 inj▹ᵣ-prong2≡ ⦃ p = sift p ⦄ {inj₁ x} b = refl
 inj▹ᵣ-prong2≡ ⦃ p = sift p ⦄ {inj₂ x} b = inj▹ᵣ-prong2≡ ⦃ p ⦄ b
 
-inj▹ᵣ-prong≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Op H′} (b : Op (Fork H (inj▹ᵣ op)))
-             → Ret (Fork H (inj▹ᵣ op)) b ≡ Ret (Fork H′ op) (subst Op (inj▹ᵣ-fork≡ ⦃ p ⦄ op) b)
+inj▹ᵣ-prong≡ : ⦃ p : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H′} (b : Op (Forkᴴ H (inj▹ᵣ op)))
+             → Ret (Forkᴴ H (inj▹ᵣ op)) b ≡ Ret (Forkᴴ H′ op) (subst Op (inj▹ᵣ-fork≡ ⦃ p ⦄ op) b)
 inj▹ᵣ-prong≡ ⦃ insert ⦄ op  = refl
 inj▹ᵣ-prong≡ ⦃ p = sift p ⦄ {inj₁ x} b = refl
 inj▹ᵣ-prong≡ ⦃ p = sift p ⦄ {inj₂ y} b = inj▹ᵣ-prong≡ ⦃ p ⦄ b
 
-proj-ret▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H₀} → Ret H (inj▹ₗ op) → Ret H₀ op
+proj-ret▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H₀} → Retᴴ H (inj▹ₗ op) → Retᴴ H₀ op
 proj-ret▹ₗ ⦃ w = insert ⦄ = id
 proj-ret▹ₗ ⦃ w = sift w ⦄ = proj-ret▹ₗ ⦃ w ⦄
 
-proj-ret2▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H₀} → Ret H₀ op → Ret H (inj▹ₗ op)
+proj-ret2▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H₀} → Retᴴ H₀ op → Retᴴ H (inj▹ₗ op)
 proj-ret2▹ₗ ⦃ w = insert ⦄ = id
 proj-ret2▹ₗ ⦃ w = sift w ⦄ = proj-ret2▹ₗ ⦃ w ⦄
 
-proj-ret▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H′} → Ret H (inj▹ᵣ op) → Ret H′ op
+proj-ret▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H′} → Retᴴ H (inj▹ᵣ op) → Retᴴ H′ op
 proj-ret▹ᵣ ⦃ w = insert ⦄ = id
 proj-ret▹ᵣ ⦃ w = sift w ⦄ {op = inj₁ x} = id
 proj-ret▹ᵣ ⦃ w = sift w ⦄ {op = inj₂ y} = proj-ret▹ᵣ ⦃ w ⦄
 
-proj-ret2▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H′} → Ret H′ op → Ret H (inj▹ᵣ op)
+proj-ret2▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H′} → Retᴴ H′ op → Retᴴ H (inj▹ᵣ op)
 proj-ret2▹ᵣ ⦃ w = insert ⦄ = id
 proj-ret2▹ᵣ ⦃ w = sift w ⦄ {op = inj₁ x} = id
 proj-ret2▹ᵣ ⦃ w = sift w ⦄ {op = inj₂ y} = proj-ret2▹ᵣ ⦃ w ⦄
 
-proj-fork▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H₀}
-              → ((b : Op (Fork H₀ op)) → Hefty H (Ret (Fork H₀ op) b))
-              → ((b : Op (Fork H (inj▹ₗ op))) → Hefty H (Ret (Fork H (inj▹ₗ op)) b))
+proj-fork▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H₀}
+              → ((b : Op (Forkᴴ H₀ op)) → Hefty H (Ret (Forkᴴ H₀ op) b))
+              → ((b : Op (Forkᴴ H (inj▹ₗ op))) → Hefty H (Ret (Forkᴴ H (inj▹ₗ op)) b))
 proj-fork▹ₗ ⦃ w ⦄ {op} f b  =
   let x = f (subst Op (inj▹ₗ-fork≡ ⦃ w ⦄ op) b) in
   subst (Hefty _) (sym $ inj▹ₗ-prong≡ ⦃ w ⦄ b) x
 
-proj-fork2▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H₀}
-              → ((b : Op (Fork H (inj▹ₗ op))) → Hefty H″ (Ret (Fork H (inj▹ₗ op)) b))
-              → ((b : Op (Fork H₀ op)) → Hefty H″ (Ret (Fork H₀ op) b))
+proj-fork2▹ₗ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H₀}
+              → ((b : Op (Forkᴴ H (inj▹ₗ op))) → Hefty H″ (Ret (Forkᴴ H (inj▹ₗ op)) b))
+              → ((b : Op (Forkᴴ H₀ op)) → Hefty H″ (Ret (Forkᴴ H₀ op) b))
 proj-fork2▹ₗ ⦃ w ⦄ {op} f b  =
   let x = f (subst Op (sym $ inj▹ₗ-fork≡ ⦃ w ⦄ op) b) in
   subst (Hefty _) (sym $ inj▹ₗ-prong2≡ ⦃ w ⦄ b) x
 
-proj-fork▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H′}
-              → ((b : Op (Fork H′ op)) → Hefty H″ (Ret (Fork H′ op) b))
-              → ((b : Op (Fork H (inj▹ᵣ op))) → Hefty H″ (Ret (Fork H (inj▹ᵣ op)) b))
+proj-fork▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H′}
+              → ((b : Op (Forkᴴ H′ op)) → Hefty H″ (Ret (Forkᴴ H′ op) b))
+              → ((b : Op (Forkᴴ H (inj▹ᵣ op))) → Hefty H″ (Ret (Forkᴴ H (inj▹ᵣ op)) b))
 proj-fork▹ᵣ ⦃ w ⦄ {op} f b  =
   let x = f (subst Op (inj▹ᵣ-fork≡ ⦃ w ⦄ op) b) in
   subst (Hefty _) (sym $ inj▹ᵣ-prong≡ ⦃ w ⦄ b) x
 
-proj-fork2▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Op H′}
-              → ((b : Op (Fork H (inj▹ᵣ op))) → Hefty H″ (Ret (Fork H (inj▹ᵣ op)) b))
-              → ((b : Op (Fork H′ op)) → Hefty H″ (Ret (Fork H′ op) b))
+proj-fork2▹ᵣ : ⦃ w : H ∼ H₀ ▹ H′ ⦄ {op : Opᴴ H′}
+              → ((b : Op (Forkᴴ H (inj▹ᵣ op))) → Hefty H″ (Ret (Forkᴴ H (inj▹ᵣ op)) b))
+              → ((b : Op (Forkᴴ H′ op)) → Hefty H″ (Ret (Forkᴴ H′ op) b))
 proj-fork2▹ᵣ ⦃ w ⦄ {op} f b  =
   let x = f (subst Op (sym $ inj▹ᵣ-fork≡ ⦃ w ⦄ op) b) in
   subst (Hefty _) (sym $ inj▹ᵣ-prong2≡ ⦃ w ⦄ b) x
 
 
 case▹  :  ⦃ H ∼ H₀ ▹ H′ ⦄
-       →  Op H
-       →  (Op H₀ → B)
-       →  (Op H′ → B)
+       →  Opᴴ H
+       →  (Opᴴ H₀ → B)
+       →  (Opᴴ H′ → B)
        →  B
 case▹ ⦃ insert ⦄ x f g = [ f , g ] x
 case▹ ⦃ sift p ⦄ x f g = [ g ∘ inj₁ , (λ y → case▹ ⦃ p ⦄ y f (g ∘ inj₂ )) ] x
 
 case▹≡  :  ⦃ w : H ∼ H₀ ▹ H′ ⦄
-       →  (op : Op H)
-       →  ((op′ : Op H₀) → op ≡ inj▹ₗ op′ → B)
-       →  ((op′ : Op H′) → op ≡ inj▹ᵣ op′ → B)
+       →  (op : Opᴴ H)
+       →  ((op′ : Opᴴ H₀) → op ≡ inj▹ₗ op′ → B)
+       →  ((op′ : Opᴴ H′) → op ≡ inj▹ᵣ op′ → B)
        →  B
 case▹≡ ⦃ w = insert ⦄ (inj₁ x) f g = f x refl
 case▹≡ ⦃ w = insert ⦄ (inj₂ y) f g = g y refl
@@ -298,7 +298,7 @@ effect tree (`Free`) with effects ε.
 -}
 
 Elaboration : Effectᴴ → Effect → Set₁
-Elaboration H ε = Alg H (Free ε)
+Elaboration H ε = Algᴴ H (Free ε)
 
 
 {-
@@ -306,7 +306,7 @@ Algebras are closed under higher order effect signature sum.
 -}
 
 infixr 12 _⋎_
-_⋎_ : Alg H₁ F → Alg H₂ F → Alg (H₁ ∔ H₂) F
+_⋎_ : Algᴴ H₁ F → Algᴴ H₂ F → Algᴴ (H₁ ∔ H₂) F
 alg (A₁ ⋎ A₂) (inj₁ op) = alg A₁ op
 alg (A₁ ⋎ A₂) (inj₂ op) = alg A₂ op
 
@@ -314,7 +314,7 @@ alg (A₁ ⋎ A₂) (inj₂ op) = alg A₂ op
 Elaborations elaborate higher-order effect trees into algebraic effect trees.
 -}
 
-elaborate : Elaboration H ε → Hefty H A → Free ε A
+elaborate : Elaboration H Δ → Hefty H A → Free Δ A
 elaborate = cataᴴ pure
 
 
@@ -322,14 +322,14 @@ elaborate = cataᴴ pure
 Elaborations can be automated
 -}
 
-record Elab (H : Effectᴴ) (ε : Effect) : Set₁ where
-  field orate : Alg H (Free ε)
+record Elab (H : Effectᴴ) (Δ : Effect) : Set₁ where
+  field orate : Algᴴ H (Free Δ)
 
 open Elab public
 
-elab  : Elab H ε → Hefty H A → Free ε A
+elab  : Elab H Δ → Hefty H A → Free Δ A
 elab = elaborate ∘ orate
 
 instance
-  auto-elab : ⦃ E₁ : Elab H₁ ε ⦄ ⦃ E₂ : Elab H₂ ε ⦄ → Elab (H₁ ∔ H₂) ε
+  auto-elab : ⦃ E₁ : Elab H₁ Δ ⦄ ⦃ E₂ : Elab H₂ Δ ⦄ → Elab (H₁ ∔ H₂) Δ
   orate (auto-elab ⦃ E₁ ⦄ ⦃ E₂ ⦄) = (orate E₁) ⋎ (orate E₂)

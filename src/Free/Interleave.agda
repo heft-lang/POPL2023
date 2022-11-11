@@ -17,8 +17,8 @@ Fairly interleave two computations into one, treating operations in the first
 continuation of a `sub` operation as atomic.
 -}
 
-interleaveₗ : ⦃ u : Universe ⦄ {Ref : T → Set} {-⦃ w : ε ∼ Choice ▸ ε′ ⦄-}
-            → Free (CC Ref ⊕ ε) A → Free (CC Ref ⊕ ε) B → Free (CC Ref ⊕ ε) A
+interleaveₗ : ⦃ u : Universe ⦄ {Ref : T → Set}
+            → Free (CC Ref ⊕ Δ) A → Free (CC Ref ⊕ Δ) B → Free (CC Ref ⊕ Δ) A
 interleaveₗ (pure x) (pure _) = pure x
 interleaveₗ (pure x) m₂ = fmap (λ _ → x) m₂
 interleaveₗ m₁ (pure x) = m₁

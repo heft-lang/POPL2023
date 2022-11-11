@@ -34,10 +34,10 @@ Ret  State get     = S
 Smart constructors:
 -}
 
-‵put : ⦃ ε ∼ State ▸ ε′ ⦄ → S → Free ε ⊤
+‵put : ⦃ Δ ∼ State ▸ Δ′ ⦄ → S → Free Δ ⊤
 ‵put ⦃ w ⦄ n = impure (inj▸ₗ (put n)) (pure ∘ proj-ret▸ₗ ⦃ w ⦄)
 
-‵get : ⦃ ε ∼ State ▸ ε′ ⦄ → Free ε S
+‵get : ⦃ Δ ∼ State ▸ Δ′ ⦄ → Free Δ S
 ‵get ⦃ w ⦄ = impure (inj▸ₗ get) (pure ∘ proj-ret▸ₗ ⦃ w ⦄)
 
 
@@ -45,8 +45,8 @@ Smart constructors:
 Handler:
 -}
 
-hSt : ParameterizedHandler State S id
-ret hSt x _ = x
+hSt : ⟨ A ! State ⇒ S ⇒ A ! Δ′ ⟩
+ret hSt x _ = pure x
 hdl hSt (put s) k s₀ = k tt s
 hdl hSt get     k s  = k s  s
 
@@ -55,7 +55,7 @@ hdl hSt get     k s  = k s  s
 Handler that gives access to the final state:
 -}
 
-hSt₁ : ParameterizedHandler State S (_× S)
-ret hSt₁ = _,_
+hSt₁ : ⟨ A ! State ⇒ S ⇒ (A × S) ! Δ′ ⟩
+ret hSt₁ x s = pure (x , s)
 hdl hSt₁ (put s)  k s₀ = k tt s
 hdl hSt₁ get      k s  = k s  s

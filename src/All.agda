@@ -52,7 +52,7 @@ open import Example.Hefty.Choice+Once
 {- 5.4: Concurrency -}
 
 open import Free.Interleave
-open import Free.Out
+open import Free.Output
 
 open import Hefty.Concur
 

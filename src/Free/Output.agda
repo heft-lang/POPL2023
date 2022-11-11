@@ -1,4 +1,4 @@
-module Free.Out where
+module Free.Output where
 
 open import Function
 open import Data.Unit
@@ -40,3 +40,12 @@ Handler
 hOut : ⟨ A ! Output ⇒ P ⇒ (A × String) ! Δ′ ⟩
 ret  hOut x _          = pure (x , "")
 hdl  hOut (out s) k p  = do (v , s′) ← k tt p; pure (v , s ++ s′)
+
+
+{-
+Handler that censors
+-}
+
+hOut′ : (String → String) → ⟨ A ! Output ⇒ P ⇒ (A × String) ! Δ′ ⟩
+ret  (hOut′ f) x _          = pure (x , "")
+hdl  (hOut′ f) (out s) k p  = do (v , s′) ← k tt p; pure (v , (f s) ++ s′)

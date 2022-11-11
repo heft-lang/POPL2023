@@ -1,6 +1,6 @@
 {-# OPTIONS --overlapping-instances --instance-search-depth=10 #-}
 
-module Example.Hefty.Out+Concur where
+module Example.Hefty.Output+Concur where
 
 open import Level renaming (zero to ℓ0) using ()
 open import Data.Unit
@@ -13,7 +13,7 @@ open Univ ⦃ ... ⦄ renaming (U to Ty; El to ⟦_⟧)
 open import Relation.Binary.PropositionalEquality
 
 open import Free  hiding (_>>=_; _>>_)
-open import Free.Out
+open import Free.Output
 open import Free.SubJump
 open import Free.Nil
 

@@ -3,7 +3,7 @@ Hefty Algebras -- The Artifact
 
 This is the artifact accompanying the POPL 2023 paper _Hefty Algebras: Modular Elaboration for Higher-Order Algebraic Effects_.
 
-The entry point for the artifact is the file `src/Index.agda`.
+The entry point for the artifact is the file `src/index.agda`.
 
 
 ### Building
@@ -18,13 +18,13 @@ Assuming you have Agda installed, you can generate browsable HTML for the artifa
 ```
 $ git submodule init
 $ git submodule update
-$ agda src/Index.agda --html
+$ agda src/index.agda --html
 ```
 
 Or as a one-liner:
 
 ```
-$ git submodule init && git submodule update && agda src/Index.agda --html
+$ git submodule init && git submodule update && agda src/index.agda --html
 ```
 
 ### Extra Material

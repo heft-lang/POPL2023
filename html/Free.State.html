@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Free.State</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Comment">{-
+A state effect module, parameterized by a type of stateful data.
+-}</a>
+<a id="72" class="Keyword">module</a> <a id="79" href="Free.State.html" class="Module">Free.State</a> <a id="90" class="Symbol">(</a><a id="91" href="Free.State.html#91" class="Bound">S</a> <a id="93" class="Symbol">:</a> <a id="95" href="Agda.Primitive.html#326" class="Primitive">Set</a><a id="98" class="Symbol">)</a> <a id="100" class="Keyword">where</a>
+
+<a id="107" class="Keyword">open</a> <a id="112" class="Keyword">import</a> <a id="119" href="Function.html" class="Module">Function</a>
+<a id="128" class="Keyword">open</a> <a id="133" class="Keyword">import</a> <a id="140" href="Data.Unit.html" class="Module">Data.Unit</a>
+<a id="150" class="Keyword">open</a> <a id="155" class="Keyword">import</a> <a id="162" href="Data.Product.html" class="Module">Data.Product</a>
+<a id="175" class="Keyword">open</a> <a id="180" class="Keyword">import</a> <a id="187" href="Data.Nat.html" class="Module">Data.Nat</a>
+
+<a id="197" class="Keyword">open</a> <a id="202" class="Keyword">import</a> <a id="209" href="Free.html" class="Module">Free</a>
+
+
+<a id="216" class="Comment">{-
+The state effect has two operations: `put s` and `get`.
+-}</a>
+
+<a id="279" class="Keyword">data</a> <a id="StateOp"></a><a id="284" href="Free.State.html#284" class="Datatype">StateOp</a> <a id="292" class="Symbol">:</a> <a id="294" href="Agda.Primitive.html#326" class="Primitive">Set</a> <a id="298" class="Keyword">where</a>
+  <a id="StateOp.put"></a><a id="306" href="Free.State.html#306" class="InductiveConstructor">put</a> <a id="310" class="Symbol">:</a> <a id="312" href="Free.State.html#91" class="Bound">S</a> <a id="314" class="Symbol">→</a> <a id="316" href="Free.State.html#284" class="Datatype">StateOp</a>
+  <a id="StateOp.get"></a><a id="326" href="Free.State.html#326" class="InductiveConstructor">get</a> <a id="330" class="Symbol">:</a>     <a id="336" href="Free.State.html#284" class="Datatype">StateOp</a>
+
+
+<a id="346" class="Comment">{-
+The signature of the state of effect:
+-}</a>
+
+<a id="State"></a><a id="391" href="Free.State.html#391" class="Function">State</a> <a id="397" class="Symbol">:</a> <a id="399" href="Free.html#787" class="Record">Effect</a>
+<a id="406" href="Free.html#816" class="Field">Op</a>   <a id="411" href="Free.State.html#391" class="Function">State</a>         <a id="425" class="Symbol">=</a> <a id="427" href="Free.State.html#284" class="Datatype">StateOp</a>
+<a id="435" href="Free.html#836" class="Field">Ret</a>  <a id="440" href="Free.State.html#391" class="Function">State</a> <a id="446" class="Symbol">(</a><a id="447" href="Free.State.html#306" class="InductiveConstructor">put</a> <a id="451" href="Free.State.html#451" class="Bound">s</a><a id="452" class="Symbol">)</a> <a id="454" class="Symbol">=</a> <a id="456" href="Agda.Builtin.Unit.html#164" class="Record">⊤</a>
+<a id="458" href="Free.html#836" class="Field">Ret</a>  <a id="463" href="Free.State.html#391" class="Function">State</a> <a id="469" href="Free.State.html#326" class="InductiveConstructor">get</a>     <a id="477" class="Symbol">=</a> <a id="479" href="Free.State.html#91" class="Bound">S</a>
+
+
+<a id="483" class="Comment">{-
+Smart constructors:
+-}</a>
+
+<a id="‵put"></a><a id="510" href="Free.State.html#510" class="Function">‵put</a> <a id="515" class="Symbol">:</a> <a id="517" class="Symbol">⦃</a> <a id="519" href="Free.html#882" class="Generalizable">Δ</a> <a id="521" href="Free.html#3485" class="Datatype Operator">∼</a> <a id="523" href="Free.State.html#391" class="Function">State</a> <a id="529" href="Free.html#3485" class="Datatype Operator">▸</a> <a id="531" href="Free.html#884" class="Generalizable">Δ′</a> <a id="534" class="Symbol">⦄</a> <a id="536" class="Symbol">→</a> <a id="538" href="Free.State.html#91" class="Bound">S</a> <a id="540" class="Symbol">→</a> <a id="542" href="Free.html#1508" class="Datatype">Free</a> <a id="547" href="Free.html#882" class="Generalizable">Δ</a> <a id="549" href="Agda.Builtin.Unit.html#164" class="Record">⊤</a>
+<a id="551" href="Free.State.html#510" class="Function">‵put</a> <a id="556" class="Symbol">⦃</a> <a id="558" href="Free.State.html#558" class="Bound">w</a> <a id="560" class="Symbol">⦄</a> <a id="562" href="Free.State.html#562" class="Bound">n</a> <a id="564" class="Symbol">=</a> <a id="566" href="Free.html#1612" class="InductiveConstructor">impure</a> <a id="573" class="Symbol">(</a><a id="574" href="Free.html#4103" class="Function">inj▸ₗ</a> <a id="580" class="Symbol">(</a><a id="581" href="Free.State.html#306" class="InductiveConstructor">put</a> <a id="585" href="Free.State.html#562" class="Bound">n</a><a id="586" class="Symbol">))</a> <a id="589" class="Symbol">(</a><a id="590" href="Free.html#1550" class="InductiveConstructor">pure</a> <a id="595" href="Function.Base.html#1106" class="Function Operator">∘</a> <a id="597" href="Free.html#4325" class="Function">proj-ret▸ₗ</a> <a id="608" class="Symbol">⦃</a> <a id="610" href="Free.State.html#558" class="Bound">w</a> <a id="612" class="Symbol">⦄)</a>
+
+<a id="‵get"></a><a id="616" href="Free.State.html#616" class="Function">‵get</a> <a id="621" class="Symbol">:</a> <a id="623" class="Symbol">⦃</a> <a id="625" href="Free.html#882" class="Generalizable">Δ</a> <a id="627" href="Free.html#3485" class="Datatype Operator">∼</a> <a id="629" href="Free.State.html#391" class="Function">State</a> <a id="635" href="Free.html#3485" class="Datatype Operator">▸</a> <a id="637" href="Free.html#884" class="Generalizable">Δ′</a> <a id="640" class="Symbol">⦄</a> <a id="642" class="Symbol">→</a> <a id="644" href="Free.html#1508" class="Datatype">Free</a> <a id="649" href="Free.html#882" class="Generalizable">Δ</a> <a id="651" href="Free.State.html#91" class="Bound">S</a>
+<a id="653" href="Free.State.html#616" class="Function">‵get</a> <a id="658" class="Symbol">⦃</a> <a id="660" href="Free.State.html#660" class="Bound">w</a> <a id="662" class="Symbol">⦄</a> <a id="664" class="Symbol">=</a> <a id="666" href="Free.html#1612" class="InductiveConstructor">impure</a> <a id="673" class="Symbol">(</a><a id="674" href="Free.html#4103" class="Function">inj▸ₗ</a> <a id="680" href="Free.State.html#326" class="InductiveConstructor">get</a><a id="683" class="Symbol">)</a> <a id="685" class="Symbol">(</a><a id="686" href="Free.html#1550" class="InductiveConstructor">pure</a> <a id="691" href="Function.Base.html#1106" class="Function Operator">∘</a> <a id="693" href="Free.html#4325" class="Function">proj-ret▸ₗ</a> <a id="704" class="Symbol">⦃</a> <a id="706" href="Free.State.html#660" class="Bound">w</a> <a id="708" class="Symbol">⦄)</a>
+
+
+<a id="713" class="Comment">{-
+Handler:
+-}</a>
+
+<a id="hSt"></a><a id="729" href="Free.State.html#729" class="Function">hSt</a> <a id="733" class="Symbol">:</a> <a id="735" href="Free.html#7015" class="Record Operator">⟨</a> <a id="737" href="Free.html#469" class="Generalizable">A</a> <a id="739" href="Free.html#7015" class="Record Operator">!</a> <a id="741" href="Free.State.html#391" class="Function">State</a> <a id="747" href="Free.html#7015" class="Record Operator">⇒</a> <a id="749" href="Free.State.html#91" class="Bound">S</a> <a id="751" href="Free.html#7015" class="Record Operator">⇒</a> <a id="753" href="Free.html#469" class="Generalizable">A</a> <a id="755" href="Free.html#7015" class="Record Operator">!</a> <a id="757" href="Free.html#884" class="Generalizable">Δ′</a> <a id="760" href="Free.html#7015" class="Record Operator">⟩</a>
+<a id="762" href="Free.html#7106" class="Field">ret</a> <a id="766" href="Free.State.html#729" class="Function">hSt</a> <a id="770" href="Free.State.html#770" class="Bound">x</a> <a id="772" class="Symbol">_</a> <a id="774" class="Symbol">=</a> <a id="776" href="Free.html#1550" class="InductiveConstructor">pure</a> <a id="781" href="Free.State.html#770" class="Bound">x</a>
+<a id="783" href="Free.html#7140" class="Field">hdl</a> <a id="787" href="Free.State.html#729" class="Function">hSt</a> <a id="791" class="Symbol">(</a><a id="792" href="Free.State.html#306" class="InductiveConstructor">put</a> <a id="796" href="Free.State.html#796" class="Bound">s</a><a id="797" class="Symbol">)</a> <a id="799" href="Free.State.html#799" class="Bound">k</a> <a id="801" href="Free.State.html#801" class="Bound">s₀</a> <a id="804" class="Symbol">=</a> <a id="806" href="Free.State.html#799" class="Bound">k</a> <a id="808" href="Agda.Builtin.Unit.html#201" class="InductiveConstructor">tt</a> <a id="811" href="Free.State.html#796" class="Bound">s</a>
+<a id="813" href="Free.html#7140" class="Field">hdl</a> <a id="817" href="Free.State.html#729" class="Function">hSt</a> <a id="821" href="Free.State.html#326" class="InductiveConstructor">get</a>     <a id="829" href="Free.State.html#829" class="Bound">k</a> <a id="831" href="Free.State.html#831" class="Bound">s</a>  <a id="834" class="Symbol">=</a> <a id="836" href="Free.State.html#829" class="Bound">k</a> <a id="838" href="Free.State.html#831" class="Bound">s</a>  <a id="841" href="Free.State.html#831" class="Bound">s</a>
+
+
+<a id="845" class="Comment">{-
+Handler that gives access to the final state:
+-}</a>
+
+<a id="hSt₁"></a><a id="898" href="Free.State.html#898" class="Function">hSt₁</a> <a id="903" class="Symbol">:</a> <a id="905" href="Free.html#7015" class="Record Operator">⟨</a> <a id="907" href="Free.html#469" class="Generalizable">A</a> <a id="909" href="Free.html#7015" class="Record Operator">!</a> <a id="911" href="Free.State.html#391" class="Function">State</a> <a id="917" href="Free.html#7015" class="Record Operator">⇒</a> <a id="919" href="Free.State.html#91" class="Bound">S</a> <a id="921" href="Free.html#7015" class="Record Operator">⇒</a> <a id="923" class="Symbol">(</a><a id="924" href="Free.html#469" class="Generalizable">A</a> <a id="926" href="Data.Product.html#1167" class="Function Operator">×</a> <a id="928" href="Free.State.html#91" class="Bound">S</a><a id="929" class="Symbol">)</a> <a id="931" href="Free.html#7015" class="Record Operator">!</a> <a id="933" href="Free.html#884" class="Generalizable">Δ′</a> <a id="936" href="Free.html#7015" class="Record Operator">⟩</a>
+<a id="938" href="Free.html#7106" class="Field">ret</a> <a id="942" href="Free.State.html#898" class="Function">hSt₁</a> <a id="947" href="Free.State.html#947" class="Bound">x</a> <a id="949" href="Free.State.html#949" class="Bound">s</a> <a id="951" class="Symbol">=</a> <a id="953" href="Free.html#1550" class="InductiveConstructor">pure</a> <a id="958" class="Symbol">(</a><a id="959" href="Free.State.html#947" class="Bound">x</a> <a id="961" href="Agda.Builtin.Sigma.html#236" class="InductiveConstructor Operator">,</a> <a id="963" href="Free.State.html#949" class="Bound">s</a><a id="964" class="Symbol">)</a>
+<a id="966" href="Free.html#7140" class="Field">hdl</a> <a id="970" href="Free.State.html#898" class="Function">hSt₁</a> <a id="975" class="Symbol">(</a><a id="976" href="Free.State.html#306" class="InductiveConstructor">put</a> <a id="980" href="Free.State.html#980" class="Bound">s</a><a id="981" class="Symbol">)</a>  <a id="984" href="Free.State.html#984" class="Bound">k</a> <a id="986" href="Free.State.html#986" class="Bound">s₀</a> <a id="989" class="Symbol">=</a> <a id="991" href="Free.State.html#984" class="Bound">k</a> <a id="993" href="Agda.Builtin.Unit.html#201" class="InductiveConstructor">tt</a> <a id="996" href="Free.State.html#980" class="Bound">s</a>
+<a id="998" href="Free.html#7140" class="Field">hdl</a> <a id="1002" href="Free.State.html#898" class="Function">hSt₁</a> <a id="1007" href="Free.State.html#326" class="InductiveConstructor">get</a>      <a id="1016" href="Free.State.html#1016" class="Bound">k</a> <a id="1018" href="Free.State.html#1018" class="Bound">s</a>  <a id="1021" class="Symbol">=</a> <a id="1023" href="Free.State.html#1016" class="Bound">k</a> <a id="1025" href="Free.State.html#1018" class="Bound">s</a>  <a id="1028" href="Free.State.html#1018" class="Bound">s</a>
+</pre></body></html>

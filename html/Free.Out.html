@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Free.Out</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="Free.Out.html" class="Module">Free.Out</a> <a id="17" class="Keyword">where</a>
+
+<a id="24" class="Keyword">open</a> <a id="29" class="Keyword">import</a> <a id="36" href="Function.html" class="Module">Function</a>
+<a id="45" class="Keyword">open</a> <a id="50" class="Keyword">import</a> <a id="57" href="Data.Unit.html" class="Module">Data.Unit</a>
+<a id="67" class="Keyword">open</a> <a id="72" class="Keyword">import</a> <a id="79" href="Data.Product.html" class="Module">Data.Product</a>
+<a id="92" class="Keyword">open</a> <a id="97" class="Keyword">import</a> <a id="104" href="Data.List.html" class="Module">Data.List</a>
+
+<a id="115" class="Keyword">open</a> <a id="120" class="Keyword">import</a> <a id="127" href="Free.html" class="Module">Free</a>
+
+
+<a id="134" class="Comment">{-
+Operation
+-}</a>
+
+<a id="151" class="Keyword">data</a> <a id="OutOp"></a><a id="156" href="Free.Out.html#156" class="Datatype">OutOp</a> <a id="162" href="Free.Out.html#162" class="Bound">X</a> <a id="164" class="Symbol">:</a> <a id="166" href="Agda.Primitive.html#326" class="Primitive">Set</a> <a id="170" class="Keyword">where</a>
+  <a id="OutOp.out"></a><a id="178" href="Free.Out.html#178" class="InductiveConstructor">out</a> <a id="182" class="Symbol">:</a> <a id="184" href="Free.Out.html#162" class="Bound">X</a> <a id="186" class="Symbol">→</a> <a id="188" href="Free.Out.html#156" class="Datatype">OutOp</a> <a id="194" href="Free.Out.html#162" class="Bound">X</a>
+
+
+<a id="198" class="Comment">{-
+Effect signature
+-}</a>
+
+<a id="Out"></a><a id="222" href="Free.Out.html#222" class="Function">Out</a> <a id="226" class="Symbol">:</a> <a id="228" href="Agda.Primitive.html#326" class="Primitive">Set</a> <a id="232" class="Symbol">→</a> <a id="234" href="Free.html#785" class="Record">Effect</a>
+<a id="241" href="Free.html#814" class="Field">Op</a> <a id="244" class="Symbol">(</a><a id="245" href="Free.Out.html#222" class="Function">Out</a> <a id="249" href="Free.Out.html#249" class="Bound">X</a><a id="250" class="Symbol">)</a> <a id="252" class="Symbol">=</a> <a id="254" href="Free.Out.html#156" class="Datatype">OutOp</a> <a id="260" href="Free.Out.html#249" class="Bound">X</a>
+<a id="262" href="Free.html#834" class="Field">Ret</a> <a id="266" class="Symbol">(</a><a id="267" href="Free.Out.html#222" class="Function">Out</a> <a id="271" href="Free.Out.html#271" class="Bound">X</a><a id="272" class="Symbol">)</a> <a id="274" class="Symbol">(</a><a id="275" href="Free.Out.html#178" class="InductiveConstructor">out</a> <a id="279" class="Symbol">_)</a> <a id="282" class="Symbol">=</a> <a id="284" href="Agda.Builtin.Unit.html#164" class="Record">⊤</a>
+
+
+<a id="288" class="Comment">{-
+Smart constructor
+-}</a>
+
+<a id="‵out"></a><a id="313" href="Free.Out.html#313" class="Function">‵out</a> <a id="318" class="Symbol">:</a> <a id="320" class="Symbol">⦃</a> <a id="322" href="Free.html#880" class="Generalizable">ε</a> <a id="324" href="Free.html#3483" class="Datatype Operator">∼</a> <a id="326" href="Free.Out.html#222" class="Function">Out</a> <a id="330" href="Free.html#477" class="Generalizable">X</a> <a id="332" href="Free.html#3483" class="Datatype Operator">▸</a> <a id="334" href="Free.html#882" class="Generalizable">ε′</a> <a id="337" class="Symbol">⦄</a> <a id="339" class="Symbol">→</a> <a id="341" href="Free.html#477" class="Generalizable">X</a> <a id="343" class="Symbol">→</a> <a id="345" href="Free.html#1506" class="Datatype">Free</a> <a id="350" href="Free.html#880" class="Generalizable">ε</a> <a id="352" href="Agda.Builtin.Unit.html#164" class="Record">⊤</a>
+<a id="354" href="Free.Out.html#313" class="Function">‵out</a> <a id="359" class="Symbol">⦃</a> <a id="361" href="Free.Out.html#361" class="Bound">w</a> <a id="363" class="Symbol">⦄</a> <a id="365" href="Free.Out.html#365" class="Bound">x</a> <a id="367" class="Symbol">=</a> <a id="369" href="Free.html#1610" class="InductiveConstructor">impure</a> <a id="376" class="Symbol">(</a><a id="377" href="Free.html#4101" class="Function">inj▸ₗ</a> <a id="383" class="Symbol">(</a><a id="384" href="Free.Out.html#178" class="InductiveConstructor">out</a> <a id="388" href="Free.Out.html#365" class="Bound">x</a><a id="389" class="Symbol">))</a> <a id="392" class="Symbol">(</a><a id="393" href="Free.html#1548" class="InductiveConstructor">pure</a> <a id="398" href="Function.Base.html#1106" class="Function Operator">∘</a> <a id="400" href="Free.html#4323" class="Function">proj-ret▸ₗ</a> <a id="411" class="Symbol">⦃</a> <a id="413" href="Free.Out.html#361" class="Bound">w</a> <a id="415" class="Symbol">⦄)</a>
+
+
+<a id="420" class="Comment">{-
+Handler
+-}</a>
+
+<a id="hOut"></a><a id="435" href="Free.Out.html#435" class="Function">hOut</a> <a id="440" class="Symbol">:</a> <a id="442" href="Free.html#7374" class="Record">SimpleHandler</a> <a id="456" class="Symbol">(</a><a id="457" href="Free.Out.html#222" class="Function">Out</a> <a id="461" href="Free.html#477" class="Generalizable">X</a><a id="462" class="Symbol">)</a> <a id="464" class="Symbol">(</a><a id="465" href="Data.Product.html#1167" class="Function Operator">_×</a> <a id="468" href="Agda.Builtin.List.html#148" class="Datatype">List</a> <a id="473" href="Free.html#477" class="Generalizable">X</a><a id="474" class="Symbol">)</a>
+<a id="476" href="Free.html#7438" class="Field">ret</a>  <a id="481" href="Free.Out.html#435" class="Function">hOut</a> <a id="486" href="Free.Out.html#486" class="Bound">x</a>          <a id="497" class="Symbol">=</a> <a id="499" href="Free.Out.html#486" class="Bound">x</a> <a id="501" href="Agda.Builtin.Sigma.html#236" class="InductiveConstructor Operator">,</a> <a id="503" href="Agda.Builtin.List.html#185" class="InductiveConstructor">[]</a>
+<a id="506" href="Free.html#7468" class="Field">hdl</a>  <a id="511" href="Free.Out.html#435" class="Function">hOut</a> <a id="516" class="Symbol">(</a><a id="517" href="Free.Out.html#178" class="InductiveConstructor">out</a> <a id="521" href="Free.Out.html#521" class="Bound">x</a><a id="522" class="Symbol">)</a> <a id="524" href="Free.Out.html#524" class="Bound">k</a>  <a id="527" class="Symbol">=</a> <a id="529" class="Keyword">do</a> <a id="532" class="Symbol">(</a><a id="533" href="Free.Out.html#533" class="Bound">v</a> <a id="535" href="Agda.Builtin.Sigma.html#236" class="InductiveConstructor Operator">,</a> <a id="537" href="Free.Out.html#537" class="Bound">xs</a><a id="539" class="Symbol">)</a> <a id="541" href="Free.html#2046" class="Function Operator">←</a> <a id="543" href="Free.Out.html#524" class="Bound">k</a> <a id="545" href="Agda.Builtin.Unit.html#201" class="InductiveConstructor">tt</a><a id="547" class="Symbol">;</a> <a id="549" href="Free.html#1548" class="InductiveConstructor">pure</a> <a id="554" class="Symbol">(</a><a id="555" href="Free.Out.html#533" class="Bound">v</a> <a id="557" href="Agda.Builtin.Sigma.html#236" class="InductiveConstructor Operator">,</a> <a id="559" href="Free.Out.html#521" class="Bound">x</a> <a id="561" href="Agda.Builtin.List.html#200" class="InductiveConstructor Operator">∷</a> <a id="563" href="Free.Out.html#537" class="Bound">xs</a><a id="565" class="Symbol">)</a>
+</pre></body></html>

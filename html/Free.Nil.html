@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Free.Nil</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="Free.Nil.html" class="Module">Free.Nil</a> <a id="17" class="Keyword">where</a>
+
+<a id="24" class="Keyword">open</a> <a id="29" class="Keyword">import</a> <a id="36" href="Data.Empty.html" class="Module">Data.Empty</a>
+
+<a id="48" class="Keyword">open</a> <a id="53" class="Keyword">import</a> <a id="60" href="Free.html" class="Module">Free</a>
+
+<a id="66" class="Comment">{-
+The empty effect
+-}</a>
+
+<a id="Nil"></a><a id="90" href="Free.Nil.html#90" class="Function">Nil</a> <a id="94" class="Symbol">:</a> <a id="96" href="Free.html#787" class="Record">Effect</a>
+<a id="103" href="Free.html#816" class="Field">Op</a>   <a id="108" href="Free.Nil.html#90" class="Function">Nil</a> <a id="112" class="Symbol">=</a> <a id="114" href="Data.Empty.html#886" class="Function">⊥</a>
+<a id="116" href="Free.html#836" class="Field">Ret</a>  <a id="121" href="Free.Nil.html#90" class="Function">Nil</a> <a id="125" class="Symbol">=</a> <a id="127" href="Data.Empty.html#1041" class="Function">⊥-elim</a>
+
+
+<a id="136" class="Comment">{-
+Handling the empty effect
+-}</a>
+<a id="un"></a><a id="168" href="Free.Nil.html#168" class="Function">un</a> <a id="171" class="Symbol">:</a> <a id="173" href="Free.html#1508" class="Datatype">Free</a> <a id="178" href="Free.Nil.html#90" class="Function">Nil</a> <a id="182" href="Free.html#469" class="Generalizable">A</a> <a id="184" class="Symbol">→</a> <a id="186" href="Free.html#469" class="Generalizable">A</a>
+<a id="188" href="Free.Nil.html#168" class="Function">un</a> <a id="191" class="Symbol">(</a><a id="192" href="Free.html#1550" class="InductiveConstructor">pure</a> <a id="197" href="Free.Nil.html#197" class="Bound">x</a><a id="198" class="Symbol">)</a> <a id="200" class="Symbol">=</a> <a id="202" href="Free.Nil.html#197" class="Bound">x</a>
+</pre></body></html>

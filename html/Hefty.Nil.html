@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Hefty.Nil</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="Hefty.Nil.html" class="Module">Hefty.Nil</a> <a id="18" class="Keyword">where</a>
+
+<a id="25" class="Keyword">open</a> <a id="30" class="Keyword">import</a> <a id="37" href="Free.html" class="Module">Free</a>
+<a id="42" class="Keyword">open</a> <a id="47" class="Keyword">import</a> <a id="54" href="Free.Nil.html" class="Module">Free.Nil</a>
+<a id="63" class="Keyword">open</a> <a id="68" class="Keyword">import</a> <a id="75" href="Hefty.html" class="Module">Hefty</a>
+<a id="81" class="Keyword">open</a> <a id="86" class="Keyword">import</a> <a id="93" href="Hefty.Lift.html" class="Module">Hefty.Lift</a>
+
+
+<a id="eNil"></a><a id="106" href="Hefty.Nil.html#106" class="Function">eNil</a> <a id="111" class="Symbol">:</a> <a id="113" href="Hefty.html#9660" class="Function">Elaboration</a> <a id="125" class="Symbol">(</a><a id="126" href="Hefty.Lift.html#188" class="Function">Lift</a> <a id="131" href="Free.Nil.html#90" class="Function">Nil</a><a id="134" class="Symbol">)</a> <a id="136" href="Free.html#882" class="Generalizable">Δ</a>
+<a id="138" href="Hefty.html#2153" class="Field">alg</a> <a id="142" href="Hefty.Nil.html#106" class="Function">eNil</a> <a id="147" class="Symbol">()</a>
+
+
+<a id="152" class="Comment">{-
+Automatable elaboration
+-}</a>
+
+<a id="183" class="Keyword">instance</a>
+  <a id="eNil′"></a><a id="194" href="Hefty.Nil.html#194" class="Function">eNil′</a> <a id="200" class="Symbol">:</a> <a id="202" href="Hefty.html#10141" class="Record">Elab</a> <a id="207" class="Symbol">(</a><a id="208" href="Hefty.Lift.html#188" class="Function">Lift</a> <a id="213" href="Free.Nil.html#90" class="Function">Nil</a><a id="216" class="Symbol">)</a> <a id="218" href="Free.html#882" class="Generalizable">Δ</a>
+  <a id="222" href="Hefty.html#10194" class="Field">orate</a> <a id="228" href="Hefty.Nil.html#194" class="Function">eNil′</a> <a id="234" class="Symbol">=</a> <a id="236" href="Hefty.Nil.html#106" class="Function">eNil</a>
+
+</pre></body></html>

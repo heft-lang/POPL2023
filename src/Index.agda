@@ -1,4 +1,4 @@
-module README where
+module Index where
 
 
 {- Code corresponding to Section 2 of the paper -}

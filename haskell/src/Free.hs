@@ -119,7 +119,7 @@ data Nop k
 un :: Free Nop a -> a
 un (Pure x) = x
 un (Do f) = case f of
-  
+
 
 -- folding trees, paramorphically
 
@@ -244,3 +244,15 @@ hid :: forall f g a.
     -> Free g a -> Free g a
 hid h = case witness @f @g of
   Forephism iso -> convert (from iso) . h . convert (to iso)
+
+
+-- free algebra
+
+data FreeAlg f a 
+  = FreeAlg { freeAlg :: f a -> a }
+
+infixr 7 +~
+(+~) :: FreeAlg f1 a -> FreeAlg f2 a -> FreeAlg (f1 + f2) a
+a1 +~ a2 = FreeAlg $ \ f -> case f of
+  L f1 -> freeAlg a1 f1
+  R f2 -> freeAlg a2 f2

@@ -56,7 +56,12 @@ open import Free.Output
 
 open import Hefty.Concur
 
-open import Example.Hefty.Out+Concur
+open import Example.Hefty.Output+Concur
+
+
+{- Example from 1.3 -}
+
+open import Example.Hefty.Censor+Output
 
 
 

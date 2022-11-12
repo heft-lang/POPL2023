@@ -1,4 +1,4 @@
-module All where
+module README where
 
 
 {- Code corresponding to Section 2 of the paper -}

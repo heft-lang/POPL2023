@@ -1,7 +1,7 @@
 Hefty Algebras -- The Artifact
 ==============================
 
-This is the artifact accompanying the POPL 2023 paper _Hefty Algebras: Modular Elaboration for Higher-Order Algebraic Effects_.
+This is the artifact accompanying the POPL 2023 paper [Hefty Algebras: Modular Elaboration for Higher-Order Algebraic Effects](http://casperbp.net/store/hefty-algebras.pdf).
 
 The entry point for the artifact is the file `src/index.agda`.
 

@@ -1,7 +1,4 @@
 module Main where
 
-import Examples.YieldOut
-import Data.List
-
 main :: IO ()
-main = putStrLn $ intercalate "\n" $ testExample
+main = putStrLn $ "Ceci n'est pas une application"
